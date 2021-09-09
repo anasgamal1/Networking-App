@@ -17,6 +17,7 @@ class NewsApiServices {
       return newsResponse.articles;
     } on DioError catch (e) {
       print(e);
+      return null;
     }
   }
 }

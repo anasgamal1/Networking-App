@@ -53,41 +53,11 @@ class _HomePageState extends State<HomePage> {
                     if (!snapshot.hasData) {
                       return Center(child: CircularProgressIndicator());
                     } else {
+                      List<Article> newsArticle = snapshot.data;
                       return ListView.builder(
-                        itemCount: snapshot.data.length,
+                        itemCount: newsArticle.length,
                         itemBuilder: (context, index) {
-                          return Container(
-                            padding: EdgeInsets.all(7),
-                            child: ListTile(
-                              onTap: () async {
-                                await canLaunch(snapshot.data[index].url)
-                                    ? await launch(snapshot.data[index].url)
-                                    : throw 'Could not launch ${snapshot.data[index].url}';
-                              },
-                              title: Text(
-                                snapshot.data[index].title,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              subtitle: Text(
-                                snapshot.data[index].description,
-                                maxLines: 4,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              leading: snapshot.data[index].urlToImage != null
-                                  ? Container(
-                                      width: 100,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
-                                        image: DecorationImage(
-                                          image: NetworkImage(
-                                              snapshot.data[index].urlToImage),
-                                        ),
-                                      ),
-                                    )
-                                  : null,
-                            ),
-                          );
+                          return NewsTile(article: newsArticle[index]);
                         },
                       );
                     } //else
@@ -97,6 +67,47 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class NewsTile extends StatelessWidget {
+  final Article article;
+
+  const NewsTile({Key key, this.article}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(7),
+      child: ListTile(
+        onTap: () async {
+          await canLaunch(article.url)
+              ? await launch(article.url)
+              : throw 'Could not launch ${article.url}';
+        },
+        title: Text(
+          article.title,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: Text(
+          article.description,
+          maxLines: 4,
+          overflow: TextOverflow.ellipsis,
+        ),
+        leading: article.urlToImage != null
+            ? Container(
+                width: 100,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  image: DecorationImage(
+                    image: NetworkImage(article.urlToImage),
+                  ),
+                ),
+              )
+            : null,
       ),
     );
   }
